@@ -9,7 +9,7 @@ services:
       - "80:80"
       - "8080:8080"
     deploy:
-      replicas: 1
+      replicas: 3
       placement:
         constraints:
           - node.role == manager
@@ -26,7 +26,7 @@ services:
       MYSQL_USER: test
       MYSQL_PASSWORD: test
     deploy:
-      replicas: 1
+      replicas: 3
       placement:
         constraints:
           - node.role == manager
@@ -34,7 +34,7 @@ services:
   redis:
     image: redis:latest
     deploy:
-      replicas: 1
+      replicas: 3
 
   php-app:
     image: php:8.2-apache
