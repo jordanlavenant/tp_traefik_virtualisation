@@ -13,3 +13,5 @@ Création du réseau overlay traefik-net :
 ```bash
 docker network create --driver=overlay traefik-net
 ```
+
+![traefik-replicas](/assets/traefik_replicas.png)
