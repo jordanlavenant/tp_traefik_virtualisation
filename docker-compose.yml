@@ -43,7 +43,7 @@ services:
     deploy:
       replicas: 3
       labels:
-        - "traefik.http.routers.php-app.rule=Host(`utilisateurs.<nom_de_votre_VM>`)"
+        - "traefik.http.routers.php-app.rule=Host(`utilisateurs.localhost`)"
         - "traefik.http.services.php-app.loadbalancer.server.port=80"
     environment:
       DB_HOST: mysql-db
