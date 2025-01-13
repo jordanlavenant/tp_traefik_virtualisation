@@ -1,25 +1,61 @@
-version: "3.9"
+version: '3.7'
+
 services:
   traefik:
     image: traefik:v2.10
     command:
-      - --configFile=/etc/traefik/traefik.yml
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.yml
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.swarmmode=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
     networks:
       - traefik-public
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     deploy:
-      replicas: 3
       placement:
-        constraints:
-          - node.role == manager
-      restart_policy:
-        condition: any
+        constraints: [node.role == manager]
+
+  nginx:
+    image: nginx:alpine
     ports:
-      - 80:80
-      - 443:443
-      - 8080:8080
+      - "8081:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.rule=Host(`nginx.localhost.com`)"
+      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+    networks:
+      - traefik-public
+
+  php-app:
+    image: php:7.4-fpm
+    ports:
+      - "8082:80"
+    volumes:
+      - ./php-app:/usr/src/myapp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpapp.rule=Host(`phpapp.localhost.com`)"
+      - "traefik.http.services.phpapp.loadbalancer.server.port=80"
+    networks:
+      - traefik-public
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: phpappdb
+      MYSQL_USER: phpappuser
+      MYSQL_PASSWORD: phpapppass
+    ports:
+      - "3306:3306"
+    networks:
+      - traefik-public
+
 networks:
   traefik-public:
     external: true
