@@ -4,13 +4,53 @@ services:
     command:
       - --api.insecure=true
       - --providers.docker=true
+      - --entrypoints.web.address=:80
     ports:
       - "80:80"
       - "8080:8080"
     deploy:
-      replicas: 3
+      replicas: 1
       placement:
         constraints:
           - node.role == manager
+      labels:
+        - "traefik.http.services.reverse-proxy.loadbalancer.server.port=80"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  mysql-db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  redis:
+    image: redis:latest
+    deploy:
+      replicas: 1
+
+  php-app:
+    image: php:8.2-apache
+    volumes:
+      - ./html:/var/www/html
+    deploy:
+      replicas: 3
+      labels:
+        - "traefik.http.routers.php-app.rule=Host(`utilisateurs.<nom_de_votre_VM>`)"
+        - "traefik.http.services.php-app.loadbalancer.server.port=80"
+    environment:
+      DB_HOST: mysql-db
+      DB_USER: test
+      DB_PASSWORD: test
+      DB_NAME: test
+      REDIS_HOST: redis
+    depends_on:
+      - mysql-db
+      - redis
