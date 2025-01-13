@@ -1,24 +1,17 @@
-version: "3.7"
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
 
-services:
-  traefik:
-    image: traefik:v2.10
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.swarmmode=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-    ports:
-      - "8080:80"
-    networks:
-      - traefik-public
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    deploy:
-      placement:
-        constraints: [node.role == manager]
+api:
+  dashboard: true
+  insecure: true # Désactiver en production et utiliser une authentification
 
-networks:
-  traefik-public:
-    external: true
+providers:
+  docker:
+    swarmMode: true
+    exposedByDefault: false
+
+log:
+  level: INFO
