@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:latest
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: default_db
+    networks:
+      - utilisateurs_mon_reseau
+    volumes:
+      - db_data:/var/lib/mysql
+
+  web:
+    build: .
+    container_name: mon-serveur-web
+    volumes:
+      - ./index.php:/var/www/html/index.php
+    ports:
+      - "8080:80"
+    networks:
+      - utilisateurs_mon_reseau
+    depends_on:
+      - db
+      - redis
+  redis:
+    image: redis:latest
+    container_name: redis
+    networks:
+      - utilisateurs_mon_reseau
+    ports:
+      - "6379:6379"
+
+networks:
+  utilisateurs_mon_reseau:
+    driver: bridge
+
+volumes:
+  db_data:
+    external: false
