@@ -1,7 +1,7 @@
 services:
   db:
     image: mysql:latest
-    container_name: mysql-db
+    container_name: utilisateurs_db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: default_db
@@ -16,7 +16,7 @@ services:
     volumes:
       - ./index.php:/var/www/html/index.php
     ports:
-      - "8080:80"
+      - "8081:80"
     networks:
       - utilisateurs_mon_reseau
     depends_on:

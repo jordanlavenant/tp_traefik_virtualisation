@@ -30,9 +30,11 @@ services:
       - utilisateurs_db_data:/var/lib/mysql
 
   utilisateurs_web:
-    image: utilisateurs_web_image
+    build:
+      context: ./services/utilisateurs
+    image: utilisateurs_web_image:latest
     volumes:
-      - ./index.php:/var/www/html/index.php
+      - ./services/utilisateurs/index.php:/var/www/html/index.php
     ports:
       - "8081:80"
     networks:
@@ -52,10 +54,14 @@ services:
       - traefik-public
     ports:
       - "6379:6379"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.redis.rule=Host(`redis.localhost`)"
+      - "traefik.http.services.redis.loadbalancer.server.port=6379"
 
 networks:
   traefik-public:
-    driver: bridge
+    external: true
 
 volumes:
   utilisateurs_db_data:

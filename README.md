@@ -11,7 +11,7 @@ Etat du cluster swarm, avec 2 workers (-40 et -37) et 1 manager (-245) :
 Création du réseau overlay traefik-net :
 
 ```bash
-docker network create --driver=overlay traefik-net
+docker network create --driver overlay traefik-public
 ```
 
 ## Déploiement du service Trafefik
@@ -23,3 +23,9 @@ docker stack deploy -c docker-compose.yml traefik
 ```
 
 ![traefik-replicas](/assets/traefik_replicas.png)
+
+## Nettoyer le déploiement
+
+```bash
+docker stack rm traefik
+```

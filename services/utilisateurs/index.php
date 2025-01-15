@@ -1,5 +1,5 @@
 <?php
-        $servername = "mysql-db";
+        $servername = "utilisateurs_db";
         $username = "root";
         $password = "root";
         $dbname = "default_db";
@@ -13,7 +13,7 @@
 
         // Connexion à Redis
         $redis = new Redis();
-        $redis->connect('redis', 6379);
+        $redis->connect('utilisateurs_redis', 6379);
 
         // Vérifier si les données sont en cache
         $cachedData = $redis->get("utilisateurs");
