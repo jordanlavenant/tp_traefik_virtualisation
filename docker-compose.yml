@@ -1,14 +1,16 @@
 services:
-
   reverse-proxy:
     image: traefik:v3.3
     command:
       - --api.insecure=true
       - --providers.docker=true
       - --entrypoints.web.address=:80
+      - --accesslog=true
     ports:
       - "80:80"
       - "8080:8080"
+    networks:
+      - traefik-public
     deploy:
       mode: replicated
       replicas: 1 # temporaire, à changer en mode global
@@ -18,6 +20,26 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
+  utilisateurs_web:
+    build:
+      context: ./services/utilisateurs
+    image: utilisateurs_web_image:latest
+    volumes:
+      - ./services/utilisateurs/index.php:/var/www/html/index.php
+    ports:
+      - "8081:80"
+    networks:
+      - traefik-public
+      - app-utilisateurs
+    depends_on:
+      - utilisateurs_db
+      - utilisateurs_redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.utilisateurs.rule=Host(`utilisateurs.localhost`)"
+      - "traefik.http.services.utilisateurs.loadbalancer.server.port=80"
+
   utilisateurs_db:
     image: mysql:latest
     container_name: utilisateurs_db
@@ -25,37 +47,27 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: default_db
     networks:
-      - traefik-public
+      - app-utilisateurs
     volumes:
       - utilisateurs_db_data:/var/lib/mysql
-
-  utilisateurs_web:
-    image: utilisateurs_web_image
-    volumes:
-      - ./index.php:/var/www/html/index.php
-    ports:
-      - "8081:80"
-    networks:
-      - traefik-public
-    depends_on:
-      - utilisateurs_db
-      - utilisateurs_redis
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.utilisateurs.rule=Host(`utilisateurs.localhost`)"
-      - "traefik.http.services.utilisateurs.loadbalancer.server.port=80"
 
   utilisateurs_redis:
     image: redis:latest
     container_name: utilisateurs_redis
     networks:
-      - traefik-public
+      - app-utilisateurs
     ports:
       - "6379:6379"
 
 networks:
+  # Network for Traefik
   traefik-public:
-    driver: bridge
+    external: true
+  # Network for app A
+  app-utilisateurs:
+    external: true
+  # Network for app B
+  # Network for app C
 
 volumes:
   utilisateurs_db_data:
