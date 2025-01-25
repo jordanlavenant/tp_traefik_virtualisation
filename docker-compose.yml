@@ -1,5 +1,4 @@
 services:
-
   reverse-proxy:
     image: traefik:v3.3
     command:
@@ -10,6 +9,8 @@ services:
     ports:
       - "80:80"
       - "8080:8080"
+    networks:
+      - traefik-public
     deploy:
       mode: replicated
       replicas: 1 # temporaire, à changer en mode global
@@ -18,17 +19,6 @@ services:
           - node.role == manager
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-
-  utilisateurs_db:
-    image: mysql:latest
-    container_name: utilisateurs_db
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: default_db
-    networks:
-      - traefik-public
-    volumes:
-      - utilisateurs_db_data:/var/lib/mysql
 
   utilisateurs_web:
     build:
@@ -40,29 +30,44 @@ services:
       - "8081:80"
     networks:
       - traefik-public
+      - app-utilisateurs
     depends_on:
       - utilisateurs_db
       - utilisateurs_redis
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
       - "traefik.http.routers.utilisateurs.rule=Host(`utilisateurs.localhost`)"
       - "traefik.http.services.utilisateurs.loadbalancer.server.port=80"
+
+  utilisateurs_db:
+    image: mysql:latest
+    container_name: utilisateurs_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: default_db
+    networks:
+      - app-utilisateurs
+    volumes:
+      - utilisateurs_db_data:/var/lib/mysql
 
   utilisateurs_redis:
     image: redis:latest
     container_name: utilisateurs_redis
     networks:
-      - traefik-public
+      - app-utilisateurs
     ports:
       - "6379:6379"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.redis.rule=Host(`redis.localhost`)"
-      - "traefik.http.services.redis.loadbalancer.server.port=6379"
 
 networks:
+  # Network for Traefik
   traefik-public:
     external: true
+  # Network for app A
+  app-utilisateurs:
+    external: true
+  # Network for app B
+  # Network for app C
 
 volumes:
   utilisateurs_db_data:
