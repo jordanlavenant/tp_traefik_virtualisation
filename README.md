@@ -6,6 +6,10 @@ Etat du cluster swarm, avec 2 workers (-40 et -37) et 1 manager (-245) :
 
 ![swarm](/assets/nodes.png)
 
+## Construction des images des services
+
+<!-- TODO -->
+
 ## Création d'un réseau overlay (traefik-net)
 
 Création du réseau overlay traefik-net :
