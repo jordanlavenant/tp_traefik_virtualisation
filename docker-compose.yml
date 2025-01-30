@@ -20,6 +20,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
+  # Utilisateurs
   utilisateurs_web:
     build:
       context: ./services/utilisateurs
@@ -59,15 +60,43 @@ services:
     ports:
       - "6379:6379"
 
+  # Flask
+  flask_web:
+    build:
+      context: ./services/flask
+    image: flask_web_image:latest
+    volumes:
+      - ./services/flask/app.py:/app/app.py
+    ports:
+      - "8082:80"
+    networks:
+      - traefik-public
+      - app-flask
+    depends_on:
+      - flask_redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.flask.rule=Host(`flask.localhost`)"
+      - "traefik.http.services.flask.loadbalancer.server.port=80"
+
+  flask_redis:
+    image: redis:latest
+    container_name: flask_redis
+    networks:
+      - app-flask
+    ports:
+      - "6380:6379"
+
+
 networks:
-  # Network for Traefik
   traefik-public:
     external: true
-  # Network for app A
   app-utilisateurs:
     external: true
-  # Network for app B
-  # Network for app C
+  app-flask:
+    external: true
+  # ...
 
 volumes:
   utilisateurs_db_data:

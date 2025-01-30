@@ -13,9 +13,7 @@ Création du réseau overlay traefik-net :
 ```bash
 docker network create --driver overlay traefik-public
 docker network create --driver overlay app-utilisateurs
-# docker network create --driver overlay app-C
-# docker network create --driver overlay app-D
-# docker network create --driver overlay app-E
+docker network create --driver overlay app-flask
 ```
 
 ## Déploiement du service Trafefik
@@ -26,15 +24,10 @@ Déploiement du service Traefik :
 docker stack deploy -c docker-compose.yml traefik
 ```
 
+![traefik-replicas](/assets/traefik_replicas.png)
+
 ## Nettoyer le déploiement
 
 ```bash
 docker stack rm traefik
 ```
-
-## EntryPoints
-
-- `localhost:8080` : Dashboard Traefik
-- `utilisateurs.localhost` : Service utilisateurs
-<!-- - `utilisateurs.localhost` : Service utilisateurs
-- `utilisateurs.localhost` : Service utilisateurs -->
