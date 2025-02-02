@@ -1,0 +1,10 @@
+services:
+  fortune_web:
+    build: .
+    ports:
+      - "8083:80"
+    volumes:
+      - ./index.php:/var/www/html/index.php
+      - ./images:/var/www/html/images
+      - ./convert.sh:/root/convert.sh
+    restart: unless-stopped

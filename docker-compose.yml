@@ -60,42 +60,52 @@ services:
     ports:
       - "6379:6379"
 
-  # Flask
-  flask_web:
+  # Cluster Swarm
+  clusterswarm_web:
     build:
-      context: ./services/flask
-    image: flask_web_image:latest
+      context: ./services/clusterswarm
+    image: clusterswarm_web_image:latest
     volumes:
-      - ./services/flask/app.py:/app/app.py
+      - ./services/clusterswarm/index.php:/var/www/html/index.php
     ports:
       - "8082:80"
     networks:
       - traefik-public
-      - app-flask
-    depends_on:
-      - flask_redis
+      - app-clusterswarm
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-public"
-      - "traefik.http.routers.flask.rule=Host(`flask.localhost`)"
-      - "traefik.http.services.flask.loadbalancer.server.port=80"
-
-  flask_redis:
-    image: redis:latest
-    container_name: flask_redis
-    networks:
-      - app-flask
+      - "traefik.http.routers.cluster_swarm.rule=Host(`clusterswarm.localhost`)"
+      - "traefik.http.services.cluster_swarm.loadbalancer.server.port=80"
+  
+  fortune_web:
+    build:
+      context: ./services/fortune
+    image: fortune_web_image:latest
+    volumes:
+      - ./services/fortune/index.php:/var/www/html/index.php
     ports:
-      - "6380:6379"
-
+      - "8083:80"
+    networks:
+      - traefik-public
+      - app-fortune
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.fortune.rule=Host(`fortune.localhost`)"
+      - "traefik.http.services.fortune.loadbalancer.server.port=80"
 
 networks:
   traefik-public:
     external: true
   app-utilisateurs:
     external: true
-  app-flask:
+  app-clusterswarm:
     external: true
+  app-fortune:
+    external: true
+  # app-flask:
+  #   external: true
   # ...
 
 volumes:

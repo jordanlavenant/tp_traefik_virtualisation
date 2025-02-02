@@ -1,0 +1,14 @@
+services:
+  php-service:
+    image: php:7.4-apache
+    ports:
+      - "8080:80"
+    deploy:
+      replicas: 1
+    configs:
+      - source: index.php
+        target: /var/www/html/index.php
+
+configs:
+  index.php:
+    file: ./index.php
