@@ -1,18 +1,16 @@
-version: '3.8'
-
 services:
   web:
     build: .
     ports:
-      - "5000:8000"
+      - "8084:80"
     environment:
       - FLASK_ENV=development
     depends_on:
-      - redis
+      - flask_redis
     volumes:
       - .:/app
 
-  redis:
+  flask_redis:
     image: "redis:latest"
     restart: always
     ports:

@@ -6,7 +6,7 @@ from flask import Flask, request, Response, jsonify
 
 app = Flask(__name__)
 
-redis_client = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
+redis_client = redis.Redis(host='flask_redis', port=6379, db=0, decode_responses=True)
 
 @app.route('/kv/<string:i>/<string:k>', defaults={'v': None}, methods=['POST', 'GET', 'DELETE', 'PUT'])
 @app.route('/kv/<string:i>/<string:k>/<string:v>', methods=['POST', 'PUT'])

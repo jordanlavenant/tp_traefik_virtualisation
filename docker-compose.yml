@@ -43,7 +43,6 @@ services:
 
   utilisateurs_db:
     image: mysql:latest
-    container_name: utilisateurs_db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: default_db
@@ -54,11 +53,10 @@ services:
 
   utilisateurs_redis:
     image: redis:latest
-    container_name: utilisateurs_redis
     networks:
       - app-utilisateurs
     ports:
-      - "6379:6379"
+      - "6381:6379"
 
   # Cluster Swarm
   clusterswarm_web:
@@ -72,12 +70,15 @@ services:
     networks:
       - traefik-public
       - app-clusterswarm
+    deploy:
+      replicas: 5
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-public"
       - "traefik.http.routers.cluster_swarm.rule=Host(`clusterswarm.localhost`)"
       - "traefik.http.services.cluster_swarm.loadbalancer.server.port=80"
-  
+
+  # Fortune
   fortune_web:
     build:
       context: ./services/fortune
@@ -95,6 +96,50 @@ services:
       - "traefik.http.routers.fortune.rule=Host(`fortune.localhost`)"
       - "traefik.http.services.fortune.loadbalancer.server.port=80"
 
+  # Flask
+  flask_web:
+    build:
+      context: ./services/flask
+    image: flask_web_image:latest
+    volumes:
+      - ./services/flask/index.py:/app/index.py
+    ports:
+      - "8084:80"
+    networks:
+      - traefik-public
+      - app-flask
+    depends_on:
+      - flask_redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.flask.rule=Host(`flask.localhost`)"
+      - "traefik.http.services.flask.loadbalancer.server.port=80"
+
+  flask_redis:
+    image: redis:latest
+    networks:
+      - app-flask
+    ports:
+      - "6384:6379"  
+
+  # Apache
+  apache_web:
+    build:
+      context: ./services/apache
+    image: apache_web_image:latest
+    volumes:
+      - ./services/apache/index.php:/var/www/html/index.php
+    networks:
+      - traefik-public
+      - app-apache
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.apache.rule=PathPrefix(`/chemin`)"
+      - "traefik.http.routers.apache.entrypoints=web"
+      - "traefik.http.services.apache.loadbalancer.server.port=80"
+
 networks:
   traefik-public:
     external: true
@@ -104,9 +149,10 @@ networks:
     external: true
   app-fortune:
     external: true
-  # app-flask:
-  #   external: true
-  # ...
+  app-flask:
+    external: true
+  app-apache:
+    external: true
 
 volumes:
   utilisateurs_db_data:

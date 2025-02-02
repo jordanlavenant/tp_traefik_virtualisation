@@ -6,4 +6,6 @@ COPY . /app
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python", "file.py"]    
+ENTRYPOINT ["python", "index.py"]    
+
+EXPOSE 80

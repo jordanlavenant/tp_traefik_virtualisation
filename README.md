@@ -12,6 +12,7 @@ Ce document expose ma démarche pour le TP de virtualisation, qui consiste à d�
   - `./services/flask` : Site web en flask pris dans la partie « Rappel de 2ième année… ».
   - `./services/fortune` : Application Fortune Images.
   - `./services/utilisateurs` : Site web de "Reprise de contact".
+  - `./services/apache` : Site web apache (sous-domaine).
 
 - `docker-compose.yml` : Docker compose pour le déploiement de Traefik et des services.
 
@@ -57,6 +58,13 @@ docker build -t fortune_web_image:latest .
 docker build -t flask_web_image:latest .
 ```
 
+### Site web apache (sous-domaine)
+
+```bash
+# ./services/apache/
+docker build -t apache_web_image:latest .
+```
+
 ## Création des réseaux overlay pour les services
 
 Une attention particulière a été portée à la création des réseaux overlay pour les services afin de les isoler les uns des autres.
@@ -86,6 +94,7 @@ docker network create --driver overlay app-utilisateurs
 docker network create --driver overlay app-clusterswarm
 docker network create --driver overlay app-fortune
 docker network create --driver overlay app-flask
+docker network create --driver overlay app-apache
 ```
 
 ## Déploiement du service Traefik
@@ -113,3 +122,4 @@ docker stack rm traefik
 | Site web de "Cluster Swarm"            | [http://clusterswarm.localhost](http://clusterswarm.localhost) |
 | Application Fortune Images             | [http://fortune.localhost](http://fortune.localhost) |
 | Site web en flask pris dans la partie « Rappel de 2ième année… » | [http://flask.localhost](http://flask.localhost) |
+| Site web apache (sous-domaine)         | [http://localhost/chemin](http://localhost/chemin) |
