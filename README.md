@@ -4,6 +4,17 @@ LAVENANT Jordan - BUT Informatique - 31 - 2024-2025
 
 Ce document expose ma démarche pour le TP de virtualisation, qui consiste à déployer un service Traefik sur un cluster Swarm, et à exposer des services web, en utilisant Traefik comme reverse proxy.
 
+## Décomposition du projet
+
+- `./assets` : Contient les images utilisées dans ce document.
+- `./services` : Contient les services à déployer.
+  - `./services/clusterswarm` : Site web de "Cluster Swarm".
+  - `./services/flask` : Site web en flask pris dans la partie « Rappel de 2ième année… ».
+  - `./services/fortune` : Application Fortune Images.
+  - `./services/utilisateurs` : Site web de "Reprise de contact".
+
+- `docker-compose.yml` : Docker compose pour le déploiement de Traefik et des services.
+
 ## Création du cluster swarm
 
 ```bash
@@ -48,17 +59,23 @@ docker build -t flask_web_image:latest .
 
 ## Création des réseaux overlay pour les services
 
-Une attention particulière a été portée à la création des réseaux overlay pour les services, afin de les isoler les uns des autres.
+Une attention particulière a été portée à la création des réseaux overlay pour les services afin de les isoler les uns des autres.
 
-En effet, chaque service doit être accessible uniquement par le service Traefik, et non pas par les autres services, afin d'être indépendant. Mais chaque service doit également être accessible par le service Traefik, pour pouvoir être exposé sur le web.
+Chaque service doit être accessible uniquement par Traefik et non par les autres services, garantissant ainsi leur indépendance. Cependant, chaque service doit également être accessible par Traefik pour pouvoir être exposé sur le web.
 
-Ainsi, j'ai créer un réseau overlay pour chaque service, afin de naturellement pouvoir communiquer dans leur propre service, mais également un service Traefik, afin de permetre à Traefik de communiquer avec les services web **uniquement** pour les exposer. Cela permet notamment de ne pas exposer les services de caches ou de bases de données sur le web, et de les garder privés.
+Pour cela, j'ai créé un réseau overlay pour chaque service, permettant une communication interne au sein de chaque service. De plus, un réseau dédié à Traefik a été mis en place pour permettre à Traefik de communiquer avec les services web **uniquement** pour les exposer. Cela permet de ne pas exposer les services de cache ou de bases de données sur le web, les gardant ainsi privés.
 
 Cette configuration est illustrée dans le schéma suivant :
 
 ![escalidraw](/assets/escalidraw.png)
 
 Création des réseaux :
+
+```bash
+sudo sh networks.sh
+```
+
+Ou manuellement :
 
 ```bash
 # Réseau pour Traefik
