@@ -19,6 +19,8 @@ services:
           - node.role == manager
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$jgvrqd1g$$tjbjgGZcIft1oQoe7hPES/"
 
   # Utilisateurs
   utilisateurs_web:
@@ -40,6 +42,7 @@ services:
       - "traefik.docker.network=traefik-public"
       - "traefik.http.routers.utilisateurs.rule=Host(`utilisateurs.localhost`)"
       - "traefik.http.services.utilisateurs.loadbalancer.server.port=80"
+      - "traefik.http.routers.utilisateurs.middlewares=auth"
 
   utilisateurs_db:
     image: mysql:latest
@@ -77,6 +80,7 @@ services:
       - "traefik.docker.network=traefik-public"
       - "traefik.http.routers.cluster_swarm.rule=Host(`clusterswarm.localhost`)"
       - "traefik.http.services.cluster_swarm.loadbalancer.server.port=80"
+      - "traefik.http.routers.cluster_swarm.middlewares=auth"
 
   # Fortune
   fortune_web:
@@ -95,6 +99,7 @@ services:
       - "traefik.docker.network=traefik-public"
       - "traefik.http.routers.fortune.rule=Host(`fortune.localhost`)"
       - "traefik.http.services.fortune.loadbalancer.server.port=80"
+      - "traefik.http.routers.fortune.middlewares=auth"
 
   # Flask
   flask_web:
@@ -115,6 +120,7 @@ services:
       - "traefik.docker.network=traefik-public"
       - "traefik.http.routers.flask.rule=Host(`flask.localhost`)"
       - "traefik.http.services.flask.loadbalancer.server.port=80"
+      - "traefik.http.routers.flask.middlewares=auth"
 
   flask_redis:
     image: redis:latest
@@ -138,7 +144,7 @@ services:
       - "traefik.docker.network=traefik-public"
       - "traefik.http.routers.apache.rule=PathPrefix(`/chemin`)"
       - "traefik.http.routers.apache.entrypoints=web"
-      - "traefik.http.services.apache.loadbalancer.server.port=80"
+      - "traefik.http.routers.apache.middlewares=auth"
 
 networks:
   traefik-public:

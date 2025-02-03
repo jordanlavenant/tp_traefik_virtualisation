@@ -28,41 +28,41 @@ Etat du cluster swarm, avec 2 workers (-40 et -37) et 1 manager (-245) :
 
 ## Construction des images des services
 
-Il nous faut créer les images des 4 services : 
+Il nous faut créer les images des 5 services : 
 
 ### Site web de "Reprise de contact"
 
 ```bash
-# ./services/utilisateurs/
-docker build -t utilisateurs_web_image:latest .
+# .
+docker build -t utilisateurs_web_image:latest ./services/utilisateurs/
 ```
 
 ### Site web de "Cluster Swarm"
 
 ```bash
-# ./services/clusterswarm/
-docker build -t clusterswarm_web_image:latest .
+# .
+docker build -t clusterswarm_web_image:latest ./services/clusterswarm/
 ```
 
 ### Application Fortune Images
 
 ```bash
-# ./services/fortune/
-docker build -t fortune_web_image:latest .
+# .
+docker build -t fortune_web_image:latest ./services/fortune/
 ```
 
 ### Site web en flask pris dans la partie « Rappel de 2ième année… »
 
 ```bash
-# ./services/flask/
-docker build -t flask_web_image:latest .
+# .
+docker build -t flask_web_image:latest ./services/flask/
 ```
 
 ### Site web apache (sous-domaine)
 
 ```bash
-# ./services/apache/
-docker build -t apache_web_image:latest .
+# .
+docker build -t apache_web_image:latest ./services/apache/
 ```
 
 ## Création des réseaux overlay pour les services
@@ -123,3 +123,11 @@ docker stack rm traefik
 | Application Fortune Images             | [http://fortune.localhost](http://fortune.localhost) |
 | Site web en flask pris dans la partie « Rappel de 2ième année… » | [http://flask.localhost](http://flask.localhost) |
 | Site web apache (sous-domaine)         | [http://localhost/chemin](http://localhost/chemin) |
+
+## Basic-auth
+
+Chaque route est sécurisée via une authentification commune basicauth. Les identifiants sont les suivants :
+
+| Utilisateur | Mot de passe |
+|-------------|--------------|
+| admin       | admin        |
