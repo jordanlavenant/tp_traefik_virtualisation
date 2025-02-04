@@ -4,6 +4,10 @@ LAVENANT Jordan - BUT Informatique - 31 - 2024-2025
 
 Ce document expose ma démarche pour le TP de virtualisation, qui consiste à déployer un service Traefik sur un cluster Swarm, et à exposer des services web, en utilisant Traefik comme reverse proxy.
 
+## Urls des services (Proxmox)
+
+<!-- - [Site web de "Reprise de contact"](http://172.16.3.245/ -->
+
 ## Décomposition du projet
 
 - `./assets` : Contient les images utilisées dans ce document.
