@@ -4,6 +4,43 @@ LAVENANT Jordan - BUT Informatique - 31 - 2024-2025
 
 Ce document expose ma démarche pour le TP de virtualisation, qui consiste à déployer un service Traefik sur un cluster Swarm, et à exposer des services web, en utilisant Traefik comme reverse proxy.
 
+## Interfaces obtenues
+
+### Traefik : [http://localhost:8080/dashboard/#/](http://localhost:8080/dashboard/#/)
+
+![traefik](/assets/traefik.png)
+
+### Utilisateurs : [http://utilisateurs.localhost](http://utilisateurs.localhost)
+
+![utilisateurs](/assets/utilisateurs.png)
+
+### Cluster Swarm : [http://clusterswarm.localhost](http://clusterswarm.localhost)
+
+![clusterswarm](/assets/clusterswarm.png)
+
+### Fortune : [http://fortune.localhost](http://fortune.localhost)
+
+![fortune](/assets/fortune.png)
+
+### Flask : [http://flask.localhost](http://flask.localhost)
+
+![flask1](/assets/flask1.png)
+
+Preuve de l'API Flask :
+
+![flask2](/assets/flask2.png)
+![flask](/assets/flask3.png)
+
+### Apache : [http://localhost/chemin](http://localhost/chemin)
+
+![apache](/assets/apache.png)
+
+### Basic-auth
+
+Chaque route est sécurisée via une authentification commune basicauth. Les identifiants sont les suivants :
+
+![auth](/assets/auth.png)
+
 ## Décomposition du projet
 
 - `./assets` : Contient les images utilisées dans ce document.
