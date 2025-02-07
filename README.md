@@ -4,7 +4,33 @@ LAVENANT Jordan - BUT Informatique - 31 - 2024-2025
 
 Ce document expose ma démarche pour le TP de virtualisation, qui consiste à déployer un service Traefik sur un cluster Swarm, et à exposer des services web, en utilisant Traefik comme reverse proxy.
 
+## Préface
+
+J'ai réalisé, suite aux conseils de M. GILLET, ce TP noté en local sur ma machine personnelle, dans un swarm mono-machine (manager). Cela m'a permis de reproduire fidèlement la configuration demandée, tout en ayant un environnement de développement plus confortable.
+
+Lorsque j'avais terminé, j'ai tenté de déployer le projet de synthèse sur les machines virtuelles de l'IUT. Cependant, après avoir déployé les services, j'ai constaté une saturation excessive de la mémoire et du CPU de la VM, l'a rendant inutilisable (prompt ne répondant pas).
+
+![cpu](/assets/cpu.png)
+
+Je n'ai donc pas déployé les 5 services sur les machines de l'IUT, mais j'ai déployé 3 services sur ma VM.
+
+![services1](/assets/services1.png)
+
+IP de la VM : **172.16.71.115**
+
+- Reverse proxy : `172.16.71.115:8080`
+- Fortune : `fortune.172.16.71.115`
+- Apache : `172.16.71.115/chemin`
+
+> Avec un rebond SSH :
+
+![fortune2](/assets/fortune2.png)
+
+![apache2](/assets/apache2.png)
+
 ## Interfaces obtenues
+
+> Interfaces obtenues sur ma machine personnelle.
 
 ### Traefik : [http://localhost:8080/dashboard/#/](http://localhost:8080/dashboard/#/)
 
@@ -20,7 +46,7 @@ Ce document expose ma démarche pour le TP de virtualisation, qui consiste à d�
 
 ### Fortune : [http://fortune.localhost](http://fortune.localhost)
 
-![fortune](/assets/fortune.png)
+![fortune1](/assets/fortune1.png)
 
 ### Flask : [http://flask.localhost](http://flask.localhost)
 
@@ -137,6 +163,12 @@ docker network create --driver overlay app-apache
 ## Déploiement du service Traefik
 
 Déploiement du service Traefik :
+
+```bash
+sh deploy.sh
+```
+
+Ou manuellement :
 
 ```bash
 docker stack deploy -c docker-compose.yml traefik
