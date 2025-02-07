@@ -5,6 +5,7 @@ services:
       - --api.insecure=true
       - --providers.docker=true
       - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:9000
       - --accesslog=true
     ports:
       - "80:80"
@@ -13,7 +14,7 @@ services:
       - traefik-public
     deploy:
       mode: replicated
-      replicas: 1 # temporaire, à changer en mode global
+      replicas: 3
       placement:
         constraints:
           - node.role == manager
@@ -23,66 +24,64 @@ services:
       - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$jgvrqd1g$$tjbjgGZcIft1oQoe7hPES/"
 
   # Utilisateurs
-  utilisateurs_web:
-    build:
-      context: ./services/utilisateurs
-    image: utilisateurs_web_image:latest
-    volumes:
-      - ./services/utilisateurs/index.php:/var/www/html/index.php
-    ports:
-      - "8081:80"
-    networks:
-      - traefik-public
-      - app-utilisateurs
-    depends_on:
-      - utilisateurs_db
-      - utilisateurs_redis
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=traefik-public"
-      - "traefik.http.routers.utilisateurs.rule=Host(`utilisateurs.localhost`)"
-      - "traefik.http.services.utilisateurs.loadbalancer.server.port=80"
-      - "traefik.http.routers.utilisateurs.middlewares=auth"
+  # utilisateurs_web:
+  #   build:
+  #     context: ./services/utilisateurs
+  #   image: utilisateurs_web_image:latest
+  #   volumes:
+  #     - ./services/utilisateurs/index.php:/var/www/html/index.php
+  #   ports:
+  #     - "8081:80"
+  #   networks:
+  #     - traefik-public
+  #     - app-utilisateurs
+  #   depends_on:
+  #     - utilisateurs_db
+  #     - utilisateurs_redis
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.docker.network=traefik-public"
+  #     - "traefik.http.routers.utilisateurs.rule=Host(`utilisateurs.localhost`)"
+  #     - "traefik.http.services.utilisateurs.loadbalancer.server.port=80"
+  #     - "traefik.http.routers.utilisateurs.middlewares=auth"
 
-  utilisateurs_db:
-    image: mysql:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: default_db
-    networks:
-      - app-utilisateurs
-    volumes:
-      - utilisateurs_db_data:/var/lib/mysql
+  # utilisateurs_db:
+  #   image: mysql:latest
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+  #     MYSQL_DATABASE: default_db
+  #   networks:
+  #     - app-utilisateurs
+  #   volumes:
+  #     - utilisateurs_db_data:/var/lib/mysql
 
-  utilisateurs_redis:
-    image: redis:latest
-    networks:
-      - app-utilisateurs
-    ports:
-      - "6381:6379"
+  # utilisateurs_redis:
+  #   image: redis:latest
+  #   networks:
+  #     - app-utilisateurs
+  #   ports:
+  #     - "6381:6379"
 
-  # Cluster Swarm
-  clusterswarm_web:
-    build:
-      context: ./services/clusterswarm
-    image: clusterswarm_web_image:latest
-    volumes:
-      - ./services/clusterswarm/index.php:/var/www/html/index.php
-    ports:
-      - "8082:80"
-    networks:
-      - traefik-public
-      - app-clusterswarm
-    deploy:
-      replicas: 5
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=traefik-public"
-      - "traefik.http.routers.cluster_swarm.rule=Host(`clusterswarm.localhost`)"
-      - "traefik.http.services.cluster_swarm.loadbalancer.server.port=80"
-      - "traefik.http.routers.cluster_swarm.middlewares=auth"
+  # clusterswarm_web:
+  #   build:
+  #     context: ./services/clusterswarm
+  #   image: clusterswarm_web_image:latest
+  #   volumes:
+  #     - ./services/clusterswarm/index.php:/var/www/html/index.php
+  #   ports:
+  #     - "8082:80"
+  #   networks:
+  #     - traefik-public
+  #     - app-clusterswarm
+  #   deploy:
+  #     replicas: 5
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.docker.network=traefik-public"
+  #     - "traefik.http.routers.cluster_swarm.rule=Host(`clusterswarm.localhost`)"
+  #     - "traefik.http.services.cluster_swarm.loadbalancer.server.port=80"
+  #     - "traefik.http.routers.cluster_swarm.middlewares=auth"
 
-  # Fortune
   fortune_web:
     build:
       context: ./services/fortune
@@ -101,33 +100,32 @@ services:
       - "traefik.http.services.fortune.loadbalancer.server.port=80"
       - "traefik.http.routers.fortune.middlewares=auth"
 
-  # Flask
-  flask_web:
-    build:
-      context: ./services/flask
-    image: flask_web_image:latest
-    volumes:
-      - ./services/flask/index.py:/app/index.py
-    ports:
-      - "8084:80"
-    networks:
-      - traefik-public
-      - app-flask
-    depends_on:
-      - flask_redis
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=traefik-public"
-      - "traefik.http.routers.flask.rule=Host(`flask.localhost`)"
-      - "traefik.http.services.flask.loadbalancer.server.port=80"
-      - "traefik.http.routers.flask.middlewares=auth"
+  # flask_web:
+  #   build:
+  #     context: ./services/flask
+  #   image: flask_web_image:latest
+  #   volumes:
+  #     - ./services/flask/index.py:/app/index.py
+  #   ports:
+  #     - "8084:80"
+  #   networks:
+  #     - traefik-public
+  #     - app-flask
+  #   depends_on:
+  #     - flask_redis
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.docker.network=traefik-public"
+  #     - "traefik.http.routers.flask.rule=Host(`flask.localhost`)"
+  #     - "traefik.http.services.flask.loadbalancer.server.port=80"
+  #     - "traefik.http.routers.flask.middlewares=auth"
 
-  flask_redis:
-    image: redis:latest
-    networks:
-      - app-flask
-    ports:
-      - "6384:6379"  
+  # flask_redis:
+  #   image: redis:latest
+  #   networks:
+  #     - app-flask
+  #   ports:
+  #     - "6384:6379"
 
   # Apache
   apache_web:
