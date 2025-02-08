@@ -1,3 +1,5 @@
+[Lien du github (meilleure lecture du readme)](https://github.com/jordanlavenant/tp_traefik_virtualisation/blob/master/README.md)
+
 # TP Virtualisation - Traefik
 
 LAVENANT Jordan - BUT Informatique - 31 - 2024-2025
@@ -10,11 +12,11 @@ J'ai initialement réalisé ce TP noté en local sur ma machine personnelle, en 
 
 Une fois le travail terminé, j'ai tenté de déployer le projet de synthèse sur les machines virtuelles de l'IUT. Cependant, après le déploiement des services, j'ai constaté une saturation excessive de la mémoire et du CPU de la VM, la rendant inutilisable (le terminal ne répondait plus).
 
-![cpu](/assets/cpu.png)
+![cpu](./assets/cpu.png)
 
 Face à ce problème, je n'ai pas déployé les cinq services sur ma machine virtuelle initiale, mais j'en ai déployé trois sur une autre à notre disposition :
 
-![services1](/assets/services1.png)
+![services1](./assets/services1.png)
 
 IP de la VM : **172.16.71.115**
 
@@ -24,9 +26,9 @@ IP de la VM : **172.16.71.115**
 
 > Avec un rebond SSH :
 
-![fortune2](/assets/fortune2.png)
+![fortune2](./assets/fortune2.png)
 
-![apache2](/assets/apache2.png)
+![apache2](./assets/apache2.png)
 
 ## Interfaces obtenues
 
@@ -34,42 +36,42 @@ IP de la VM : **172.16.71.115**
 
 ### Traefik : [http://localhost:8080/dashboard/#/](http://localhost:8080/dashboard/#/)
 
-![traefik](/assets/traefik.png)
+![traefik](./assets/traefik.png)
 
 ### Utilisateurs : [http://utilisateurs.localhost](http://utilisateurs.localhost)
 
-![utilisateurs](/assets/utilisateurs.png)
+![utilisateurs](./assets/utilisateurs.png)
 
 ### Cluster Swarm : [http://clusterswarm.localhost](http://clusterswarm.localhost)
 
-![clusterswarm](/assets/clusterswarm.png)
+![clusterswarm](./assets/clusterswarm.png)
 
 ### Fortune : [http://fortune.localhost](http://fortune.localhost)
 
-![fortune1](/assets/fortune1.png)
+![fortune1](./assets/fortune1.png)
 
 ### Flask : [http://flask.localhost](http://flask.localhost)
 
-![flask1](/assets/flask1.png)
+![flask1](./assets/flask1.png)
 
 Preuve de l'API Flask :
 
-![flask2](/assets/flask2.png)
-![flask](/assets/flask3.png)
+![flask2](./assets/flask2.png)
+![flask](./assets/flask3.png)
 
 ### Apache : [http://localhost/chemin](http://localhost/chemin)
 
-![apache](/assets/apache.png)
+![apache](./assets/apache.png)
 
 ### Basic-auth
 
 Chaque route est sécurisée via une authentification commune basicauth. Les identifiants sont les suivants :
 
-![auth](/assets/auth.png)
+![auth](./assets/auth.png)
 
 ## Décomposition du projet
 
-- `./assets` : Contient les images utilisées dans ce document.
+- `../assets` : Contient les images utilisées dans ce document.
 - `./services` : Contient les services à déployer.
   - `./services/clusterswarm` : Site web de "Cluster Swarm".
   - `./services/flask` : Site web en flask pris dans la partie « Rappel de 2ième année… ».
@@ -87,11 +89,18 @@ docker swarm init
 
 Etat du cluster swarm, avec 2 workers (-40 et -37) et 1 manager (-245) :
 
-![swarm](/assets/nodes.png)
+![swarm](./assets/nodes.png)
 
 ## Construction des images des services
 
 Il nous faut créer les images des 5 services : 
+
+```bash
+# .
+sh images.sh
+```
+
+Ou manuellement :
 
 ### Site web de "Reprise de contact"
 
@@ -138,12 +147,13 @@ Pour cela, j'ai créé un réseau overlay pour chaque service, permettant une co
 
 Cette configuration est illustrée dans le schéma suivant :
 
-![escalidraw](/assets/escalidraw.png)
+![escalidraw](./assets/escalidraw.png)
 
 Création des réseaux :
 
 ```bash
-sudo sh networks.sh
+# .
+sh networks.sh
 ```
 
 Ou manuellement :
@@ -165,16 +175,18 @@ docker network create --driver overlay app-apache
 Déploiement du service Traefik :
 
 ```bash
+# .
 sh deploy.sh
 ```
 
 Ou manuellement :
 
 ```bash
+# .
 docker stack deploy -c docker-compose.yml traefik
 ```
 
-![traefik-replicas](/assets/traefik_replicas.png)
+![traefik-replicas](./assets/traefik_replicas.png)
 
 ## Nettoyer le déploiement
 
