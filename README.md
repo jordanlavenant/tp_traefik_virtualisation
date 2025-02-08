@@ -6,13 +6,13 @@ Ce document expose ma démarche pour le TP de virtualisation, qui consiste à d�
 
 ## Préface
 
-J'ai réalisé, suite aux conseils de M. GILLET, ce TP noté en local sur ma machine personnelle, dans un swarm mono-machine (manager). Cela m'a permis de reproduire fidèlement la configuration demandée, tout en ayant un environnement de développement plus confortable.
+J'ai initialement réalisé ce TP noté en local sur ma machine personnelle, en suivant les conseils de M. GILLET, au sein d'un swarm mono-noeud manager. Cela m'a permis de reproduire fidèlement la configuration demandée tout en bénéficiant d'un environnement de développement plus confortable et portable.
 
-Lorsque j'avais terminé, j'ai tenté de déployer le projet de synthèse sur les machines virtuelles de l'IUT. Cependant, après avoir déployé les services, j'ai constaté une saturation excessive de la mémoire et du CPU de la VM, l'a rendant inutilisable (prompt ne répondant pas).
+Une fois le travail terminé, j'ai tenté de déployer le projet de synthèse sur les machines virtuelles de l'IUT. Cependant, après le déploiement des services, j'ai constaté une saturation excessive de la mémoire et du CPU de la VM, la rendant inutilisable (le terminal ne répondait plus).
 
 ![cpu](/assets/cpu.png)
 
-Je n'ai donc pas déployé les 5 services sur les machines de l'IUT, mais j'ai déployé 3 services sur ma VM.
+Face à ce problème, je n'ai pas déployé les cinq services sur ma machine virtuelle initiale, mais j'en ai déployé trois sur une autre à notre disposition :
 
 ![services1](/assets/services1.png)
 
